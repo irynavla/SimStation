@@ -8,22 +8,25 @@ import java.io.Serializable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static java.lang.Thread.sleep;
-
+// Agent is an abstract class that represents a unit of behavior (like a "worker" or "actor")
+// in the simulation. It runs as a separate thread and can be paused, resumed, and stopped.
 public abstract class Agent extends Publisher implements Serializable, Runnable {
-    private final String name;
-    protected Heading heading;
-    private int xc;
-    private int yc;
-    private boolean suspended = false;
-    public synchronized boolean isStopped() { return stopped; }
-    private boolean stopped = false;
-    public synchronized boolean isSuspended() { return suspended;  }
-    transient protected Thread myThread;
-    private Simulation world;
-    private Agent partner = null;
-    transient private ExecutorService executor;
 
+    private final String name;               // Name of the agent
+    protected Heading heading;              // Direction the agent is moving
+    private int xc;                          // X-coordinate
+    private int yc;                          // Y-coordinate
+    private boolean suspended = false;       // If true, agent is suspended
+    private boolean stopped = false;         // If true, agent is stopped
+    public synchronized boolean isStopped() { return stopped; }
+    public synchronized boolean isSuspended() { return suspended; }
+
+    transient protected Thread myThread;     // The thread running this agent (not serialized)
+    private Simulation world;                // The simulation this agent belongs to
+    private Agent partner = null;            // Optional: another agent it interacts with
+    transient private ExecutorService executor; // For background task management (not serialized)
+
+    // Constructor: sets a random heading and random position
     public Agent(String name) {
         this.name = name;
         heading = Heading.random();
@@ -32,25 +35,29 @@ public abstract class Agent extends Publisher implements Serializable, Runnable 
         yc = Utilities.rng.nextInt(500);
     }
 
+    // Called when thread starts
     public synchronized void run() {
-        myThread = Thread.currentThread(); // catch my thread
-        checkSuspended();
-        SwingWorkerSubclass sw = new SwingWorkerSubclass();
-        executor.submit(sw);
-        sw.execute();
-        onExit();
+        myThread = Thread.currentThread();  // Capture this agent's thread
+        checkSuspended();                   // Wait if suspended
+        SwingWorkerSubclass sw = new SwingWorkerSubclass(); // Background work
+        executor.submit(sw);               // Submit to executor
+        sw.execute();                       // Start the worker
+        onExit();                           // Custom logic on exit
     }
 
+    // Starts a new thread for this agent and assigns an executor
     public synchronized void start() {
         this.executor = Executors.newFixedThreadPool(world.getAgents().size());
         Thread thread = new Thread(this);
         thread.start();
     }
 
+    // Suspends the agent
     public synchronized void suspend() {
         suspended = true;
     }
 
+    // Waits for the agent's thread to finish
     public synchronized void join() {
         try {
             if (myThread != null) myThread.join();
@@ -59,16 +66,20 @@ public abstract class Agent extends Publisher implements Serializable, Runnable 
         }
     }
 
+    // Resumes the agent from suspension
     public synchronized void resume() {
         notify();
     }
 
+    // Signals the agent to stop
     public synchronized void stop() {
         stopped = true;
     }
 
+    // Abstract method: subclasses must define how this agent updates each cycle
     public abstract void update() throws Exception;
 
+    // Moves the agent in its heading direction step-by-step with wrap-around
     public synchronized void move(int steps) throws InterruptedException {
         int frameSize = 500;
 
@@ -80,21 +91,21 @@ public abstract class Agent extends Publisher implements Serializable, Runnable 
                 case WEST  -> xc--;
             }
 
-            // wrap-around logic
+            // wrap-around (teleport from one edge to the opposite)
             xc = (xc + frameSize) % frameSize;
             yc = (yc + frameSize) % frameSize;
 
-            world.changed(); // let view know something changed
-            Thread.sleep(20); // animation delay
+            world.changed(); // Notify that the view needs to repaint
+            Thread.sleep(20); // Slight pause for animation effect
         }
     }
 
-
+    // Links this agent to the simulation it's part of
     public synchronized void setSimulation(Simulation simulation) {
         this.world = simulation;
     }
 
-    // wait for notification if I'm not stopped and I am suspended
+    // If suspended, wait until notified
     private synchronized void checkSuspended() {
         try {
             while(!stopped && suspended) {
@@ -106,10 +117,12 @@ public abstract class Agent extends Publisher implements Serializable, Runnable 
         }
     }
 
-    public abstract void onStart();
-    public abstract void onInterrupted();
-    public abstract void onExit();
+    // Hooks for subclasses to define custom behavior
+    public abstract void onStart();        // What to do at the start of each cycle
+    public abstract void onInterrupted();  // What to do if interrupted
+    public abstract void onExit();         // What to do when agent finishes
 
+    // Returns the name with status for display/debugging
     public synchronized String getName() {
         String result = name;
         if (stopped) result += " (stopped)";
@@ -118,39 +131,36 @@ public abstract class Agent extends Publisher implements Serializable, Runnable 
         return result;
     }
 
-    public int getXc() {
-        return xc;
-    }
-    public int getYc() {
-        return yc;
-    }
+    // Get agent coordinates
+    public int getXc() { return xc; }
+    public int getYc() { return yc; }
 
-    /*public synchronized void updatePartner(Agent partner) {
-        this.partner = partner;
-    }*/
-
+    // Assigns a nearby agent within a radius as this agent’s “partner”
     public synchronized void setPartner(int radius) {
         this.partner = world.getNeighbor(this, radius);
     }
+
+    // Gets the agent’s current partner
     public synchronized Agent getPartner() {
         return this.partner;
     }
 
+    // Background worker that repeatedly runs agent logic while not stopped
     class SwingWorkerSubclass extends SwingWorker<Void, Void> {
         @Override
         protected Void doInBackground() {
-            while(!stopped) {
+            while (!stopped) {
                 try {
-                    onStart();
-                    onInterrupted();
-                    update(); // update the business logic
-                    Thread.sleep(1000); // allow time for all threads to sync
+                    onStart();        // Custom logic before update
+                    onInterrupted();  // Custom logic after resume/suspend
+                    update();         // Core logic for the agent
+                    Thread.sleep(1000); // Wait for other agents
                     if (SwingUtilities.isEventDispatchThread()) {
                         System.out.println("Is event dispatch thread 3");
                     }
 
                     synchronized (this) {
-                        checkSuspended();
+                        checkSuspended(); // Wait if suspended
                     }
 
                 } catch (Exception e) {
@@ -159,7 +169,5 @@ public abstract class Agent extends Publisher implements Serializable, Runnable 
             }
             return null;
         }
-
     }
-
 }
