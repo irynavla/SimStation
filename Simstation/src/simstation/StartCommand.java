@@ -7,8 +7,9 @@ public class StartCommand extends Command{
         super(model);
     }
 
-    public void execute(){
-        ((World) model).start();
+    public void execute()  throws Exception {
+        Simulation sim = (Simulation) model;
+        sim.start();
     }
 }
 
