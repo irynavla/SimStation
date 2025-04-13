@@ -6,7 +6,7 @@ public abstract class Model extends Publisher implements Serializable {
     public boolean unsavedChanges = false;
     public String fileName = null;
 
-    protected void changed() {
+    public void changed() {
         unsavedChanges = true;
         notifySubscribers();
     }
