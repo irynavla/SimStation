@@ -7,10 +7,8 @@ public class StatsCommand extends Command{
         super(model);
     }
 
-    public void execute(){
-        World world = (World) model;
-        int totalAgents = world.getAgents().size();
-        int runningAgents = world.getRunningAgents();
-        Utilities.inform("Total Agents: " + totalAgents + "\nRunning Agents: " + runningAgents);
+    public void execute() {
+        Simulation simulation = (Simulation) model;
+        simulation.stats();
     }
 }
