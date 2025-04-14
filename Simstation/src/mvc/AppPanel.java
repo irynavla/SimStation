@@ -1,11 +1,14 @@
 package mvc;
 
+
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
+
 // AppPanel is the MVC controller
 public class AppPanel extends JPanel implements Subscriber, ActionListener  {
+
 
     protected Model model;
     protected AppFactory factory;
@@ -15,7 +18,9 @@ public class AppPanel extends JPanel implements Subscriber, ActionListener  {
     public static int FRAME_WIDTH = 800;
     public static int FRAME_HEIGHT = 600;
 
+
     public AppPanel(AppFactory factory) {
+
 
         // initialize fields here
         this.factory = factory;
@@ -34,11 +39,15 @@ public class AppPanel extends JPanel implements Subscriber, ActionListener  {
         frame.setSize(FRAME_WIDTH, FRAME_HEIGHT);
     }
 
+
     public void display() { frame.setVisible(true); }
+
 
     public void update() {repaint();}
 
+
     public Model getModel() { return model; }
+
 
     // called by file/open and file/new
     public void setModel(Model newModel) {
@@ -49,6 +58,12 @@ public class AppPanel extends JPanel implements Subscriber, ActionListener  {
         view.setModel(this.model);
         model.changed();
     }
+//    public void setModel(Model m) {
+//        model = m;
+//        view.setModel(m);
+//        model.changed();
+//    }
+
 
     protected JMenuBar createMenuBar() {
         JMenuBar result = new JMenuBar();
@@ -57,64 +72,71 @@ public class AppPanel extends JPanel implements Subscriber, ActionListener  {
                 Utilities.makeMenu("File", new String[] {"New",  "Save", "SaveAs", "Open", "Quit"}, this);
         result.add(fileMenu);
 
+
         JMenu editMenu =
                 Utilities.makeMenu("Edit", factory.getEditCommands(), this);
         result.add(editMenu);
+
 
         JMenu helpMenu =
                 Utilities.makeMenu("Help", new String[] {"About", "Help"}, this);
         result.add(helpMenu);
 
+
         return result;
     }
 
-    public void actionPerformed(ActionEvent ae) {
+
+    public void actionPerformed(ActionEvent e) {
+        String cmmd = e.getActionCommand();
+        System.out.println(cmmd);
         try {
-            String cmmd = ae.getActionCommand();
+            switch (cmmd) {
+                case "Save" -> {
+                    try {
+                        Utilities.save(model, true);
+                    } catch (Exception ex) {
+                        Utilities.inform("ERROR: Failed to save file.");
+                    }
+                }
+                case "Open" -> {
+                    try {
+                        Model newModel = Utilities.open(model);
+                        if (newModel != null) setModel(newModel);
+                    } catch (Exception ex) {
+                        Utilities.inform("ERROR: Didn't load any file, potentially due to an error.");
+                    }
+                }
+                case "New" -> {
+                    Utilities.saveChanges(model);
+                    setModel(factory.makeModel());
 
-            if (cmmd.equals("Save")) {
-                Utilities.save(model, false);
 
-            } else if (cmmd.equals("SaveAs")) {
-                Utilities.save(model, true);
-
-            } else if (cmmd.equals("Open")) {
-                Model newModel = Utilities.open(model);
-                if (newModel != null) {setModel(newModel);}
-
-            } else if (cmmd.equals("New")) {
-                Utilities.saveChanges(model);
-                setModel(factory.makeModel());
-                // needed cuz setModel sets to true:
-                model.setUnsavedChanges(false);
-
-            } else if (cmmd.equals("Quit")) {
-                Utilities.saveChanges(model);
-                System.exit(0);
-
-            } else if (cmmd.equals("About")) {
-
-                Utilities.inform(factory.about());
-
-            } else if (cmmd.equals("Help")) {
-                Utilities.inform(factory.getHelp());
-
-            } else { // must be from Edit menu
-                this.factory.makeEditCommand(this.model,cmmd).execute();
+                    // needed cuz setModel sets to true:
+                    model.setUnsavedChanges(false);
+                }
+                case "Quit" -> System.exit(0);
+                case "About" -> Utilities.inform(factory.about());
+                case "Help" -> Utilities.inform(factory.getHelp());
+                default -> factory.makeEditCommand(model, cmmd, this).execute();
             }
-        } catch (Exception e) {
-            handleException(e);
+        } catch (Exception ex) {
+            Utilities.error(ex);
         }
     }
+
 
     public class ControlPanel extends JPanel {
         public ControlPanel() {
 
+
         }
     }
+
 
     protected void handleException(Exception e) {
         Utilities.error(e);
     }
+
 
 }
