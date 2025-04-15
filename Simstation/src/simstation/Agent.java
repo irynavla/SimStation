@@ -51,6 +51,9 @@ public abstract class Agent extends Publisher implements Serializable, Runnable 
         Thread thread = new Thread(this);
         thread.start();
     }
+    public synchronized boolean isRunning() {
+        return !stopped && !suspended;
+    }
 
     // Suspends the agent
     public synchronized void suspend() {
