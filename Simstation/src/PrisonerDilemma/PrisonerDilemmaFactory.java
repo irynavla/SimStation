@@ -5,41 +5,46 @@ import mvc.*;
 
  public class PrisonerDilemmaFactory extends SimStationFactory {
 
-        @Override
-        public Model makeModel() {
-            return new ConcretePrisonersDilemmaTournament(); // Use a concrete subclass
-        }
 
-        @Override
-        public View makeView(Model m) {
-            return new PrisonersDilemmaView((PrisonersDilemmaTournament) m);
-        }
+     @Override
+     public Model makeModel() {
+         return new PrisonersDilemmaTournament();
+     }
 
-        @Override
-        public String[] getEditCommands() {
-            return new String[0]; // If you don't have any edit commands, return an empty array
-        }
+     @Override
+     public View makeView(Model model) {
+         return new PrisonersDilemmaView(model);
+     }
 
-        @Override
-        public Command makeEditCommand(Model model, String type) {
-            // Return null or a default command if you don't want any specific editing functionality
-            return null;
-        }
+     @Override
+     public String getTitle() {
+         return "Prisoner's Dilemma Tournament";
+     }
 
-        @Override
-        public String getTitle() {
-            return "Prisoner's Dilemma Tournament";
-        }
+     @Override
+     public String[] getHelp() {
+         return new String[]{
+                 "In this simulation, prisoners with different strategies interact using the Prisoner's Dilemma game.",
+                 "Strategies include: Cheat, Cooperate, Tit-for-Tat, and Random."
+         };
+     }
 
-        @Override
-        public String[] getHelp() {
-            return new String[] { "Simulates Prisoner's Dilemma strategies in a social network" };
-        }
+     @Override
+     public String about() {
+         return "SimStation – Prisoner's Dilemma by Your Name, 2025";
+     }
 
-        @Override
-        public String about() {
-            return "Prisoner's Dilemma Tournament Simulation by [Your Name]";
-        }
+     @Override
+     public Command makeEditCommand(Model model, String type) {
+         return switch (type) {
+             case "Start" -> new StartCommand(model);
+             case "Stop" -> new StopCommand(model);
+             case "Suspend" -> new SuspendCommand(model);
+             case "Resume" -> new ResumeCommand(model);
+             case "Stats" -> new StatsCommand(model);
+             default -> throw new IllegalArgumentException("Unknown command: " + type);
+         };
+     }
 
 }
 

@@ -3,26 +3,68 @@ package PrisonerDilemma;
 import simstation.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
+import java.util.ArrayList;
 
-public abstract class PrisonersDilemmaTournament extends Simulation {
-    private Map<String, Integer> strategyFitness = new HashMap<>();
+public class PrisonersDilemmaTournament extends Simulation {
+    private List<Prisoner> prisoners = new ArrayList<>();
 
-    public PrisonersDilemmaTournament() {
-        super();
+    // Override the populate method from Simulation class
+    @Override
+    public void populate() throws Exception {
+        // Create 10 prisoners for each strategy (cheat, cooperate, etc.)
+        for (int i = 0; i < 10; i++) {
+            prisoners.add(new Prisoner("CheatPrisoner-" + i, new Cheat()));       // Cheat strategy
+            prisoners.add(new Prisoner("CooperatePrisoner-" + i, new Cooperate())); // Cooperate strategy
+            prisoners.add(new Prisoner("RandomPrisoner-" + i, new Randomly()));    // Random strategy
+            prisoners.add(new Prisoner("TitForTatPrisoner-" + i, new Tit4Tat()));   // TitForTat strategy
+        }
+
+        // Add all prisoners to the simulation
+        for (Prisoner prisoner : prisoners) {
+            addAgent(prisoner);
+        }
     }
 
-
-
+    // Override the getStats method from Simulation class
     @Override
     public String[] getStats() {
-        // Format each strategy and its corresponding fitness into an array of strings
-        String[] stats = new String[strategyFitness.size()];
-        int i = 0;
-        for (Map.Entry<String, Integer> entry : strategyFitness.entrySet()) {
-            stats[i++] = entry.getKey() + ": " + entry.getValue();
-        }
-        return stats;
-    }
+        // Calculate average fitness for each strategy
+        int totalFitnessCheat = 0, totalFitnessCooperate = 0, totalFitnessRandom = 0, totalFitnessTitForTat = 0;
+        int countCheat = 0, countCooperate = 0, countRandom = 0, countTitForTat = 0;
 
+        for (Prisoner prisoner : prisoners) {
+            if (prisoner.getStrategy() instanceof Cheat) {
+                totalFitnessCheat += prisoner.getFitness();
+                countCheat++;
+            } else if (prisoner.getStrategy() instanceof Cooperate) {
+                totalFitnessCooperate += prisoner.getFitness();
+                countCooperate++;
+            } else if (prisoner.getStrategy() instanceof Randomly) {
+                totalFitnessRandom += prisoner.getFitness();
+                countRandom++;
+            } else if (prisoner.getStrategy() instanceof Tit4Tat) {
+                totalFitnessTitForTat += prisoner.getFitness();
+                countTitForTat++;
+            }
+        }
+
+        return new String[]{
+                "Cheat Strategy Avg Fitness: " + (countCheat == 0 ? 0 : totalFitnessCheat / countCheat),
+                "Cooperate Strategy Avg Fitness: " + (countCooperate == 0 ? 0 : totalFitnessCooperate / countCooperate),
+                "Random Strategy Avg Fitness: " + (countRandom == 0 ? 0 : totalFitnessRandom / countRandom),
+                "TitForTat Strategy Avg Fitness: " + (countTitForTat == 0 ? 0 : totalFitnessTitForTat / countTitForTat)
+        };
+    }
+    /*
+    // Optional: If there is a getHelp method in Simulation class
+    @Override
+    public String[] getHelp() {
+        return new String[]{
+                "In this simulation, prisoners with different strategies interact using the Prisoner's Dilemma game.",
+                "Strategies include: Cheat, Cooperate, Tit-for-Tat, and Random."
+        };
+    }
+    */
 
 }

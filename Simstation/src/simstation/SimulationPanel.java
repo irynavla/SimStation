@@ -29,7 +29,7 @@ public class SimulationPanel extends AppPanel {
 
         p = new JPanel();
         p.setOpaque(false);
-        button = new JButton("Pause");
+        button = new JButton("Suspend");
         button.addActionListener(this);
         p.add(button);
         threadPanel.add(p);

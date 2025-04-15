@@ -108,6 +108,8 @@ public abstract class Agent extends Publisher implements Serializable, Runnable 
         this.world = simulation;
     }
 
+    public Simulation getSimulation() {return world;}
+
     // If suspended, wait until notified
     private synchronized void checkSuspended() {
         try {
