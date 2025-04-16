@@ -65,6 +65,25 @@ public class PlagueSimulation extends Simulation {
     public void setIsFatal(boolean fatal) {
         this.isFatal = fatal;
     }
+    public void startSimulation() {
+        // Start the simulation logic here
+        System.out.println("Simulation started!");
+    }
+
+    public void pauseSimulation() {
+        // Pause the simulation logic here
+        System.out.println("Simulation paused!");
+    }
+
+    public void stopSimulation() {
+        // Stop the simulation logic here
+        System.out.println("Simulation stopped!");
+    }
+
+    public void statsSimulation() {
+        // Show stats or log them
+        System.out.println("Displaying stats...");
+    }
 
     public static void main(String[] args) {
         SimulationPanel panel = new PlaguePanel(new PlagueFactory());
