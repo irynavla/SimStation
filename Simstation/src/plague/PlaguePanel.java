@@ -3,7 +3,6 @@ package plague;
 import simstation.*;
 import mvc.*;
 import javax.swing.*;
-import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
 
@@ -16,10 +15,81 @@ public class PlaguePanel extends SimulationPanel {
     public PlaguePanel(SimStationFactory factory) {
         super(factory);
 
+        // Ensure layout is BorderLayout
+        setLayout(new BorderLayout());
+
+        // === Controls Panel (Left Side) ===
         JPanel controls = new JPanel();
         controls.setLayout(new BoxLayout(controls, BoxLayout.Y_AXIS));
         controls.setBackground(Color.PINK);
-        controls.setPreferredSize(new Dimension(250, 600)); // Wider panel
+        controls.setPreferredSize(new Dimension(250, 600));
+
+        // === Simulation Control Buttons (GridLayout) ===
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new GridLayout(1, 5));  // 1 row, 5 columns
+
+        // Create Start Button
+        JButton startBtn = new JButton("Start");
+        startBtn.addActionListener(ae -> {
+            try {
+                System.out.println("Start button pressed");
+
+                new StartCommand(model).execute();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
+        buttonPanel.add(startBtn);
+
+        // Create Pause Button
+        JButton pauseBtn = new JButton("Pause");
+        pauseBtn.addActionListener(ae -> {
+            try {
+                new SuspendCommand(model).execute();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
+        buttonPanel.add(pauseBtn);
+
+        // Create Resume Button
+        JButton resumeBtn = new JButton("Resume");
+        resumeBtn.addActionListener(ae -> {
+            try {
+                new ResumeCommand(model).execute();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
+        buttonPanel.add(resumeBtn);
+
+        // Create Stop Button
+        JButton stopBtn = new JButton("Stop");
+        stopBtn.addActionListener(ae -> {
+            try {
+                new StopCommand(model).execute();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
+        buttonPanel.add(stopBtn);
+
+        // Create Stats Button
+        JButton statsBtn = new JButton("Stats");
+        statsBtn.addActionListener(ae -> {
+            try {
+                new StatsCommand(model).execute();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
+        buttonPanel.add(statsBtn);
+
+        // Add the button panel to the controls section
+        controls.add(Box.createRigidArea(new Dimension(0, 20)));
+        controls.add(new JLabel("Simulation Controls:"));
+        controls.add(Box.createRigidArea(new Dimension(0, 5)));
+        controls.add(buttonPanel);  // Adding the button panel
 
         // === Initial % Infected ===
         controls.add(new JLabel("Initial % Infected:"));
@@ -60,39 +130,34 @@ public class PlaguePanel extends SimulationPanel {
         // === Fatality Toggle Button ===
         fatalityButton = new JButton("Not Fatal");
         fatalityButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        fatalityButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent ae) {
-                isFatal = !isFatal;
-                fatalityButton.setText(isFatal ? "Not Fatal" : "Fatal");
-            }
+        fatalityButton.addActionListener(ae -> {
+            isFatal = !isFatal;
+            fatalityButton.setText(isFatal ? "Not Fatal" : "Fatal");
         });
         controls.add(fatalityButton);
+        controls.add(Box.createRigidArea(new Dimension(0, 20)));
 
-        this.add(controls, BorderLayout.WEST);
+        // Add the controls panel to the WEST side
+        add(controls, BorderLayout.WEST);
     }
 
     @Override
     public void actionPerformed(ActionEvent ae) {
-        super.actionPerformed(ae);  // Ensure the default button actions are triggered.
+        super.actionPerformed(ae);
 
-        // Fetch the model and cast it to PlagueSimulation
         PlagueSimulation sim = (PlagueSimulation) model;
-
-        // Pass slider values to the simulation model
         sim.setInitialInfected(infectedSlider.getValue());
         sim.setInitialPopulation(populationSlider.getValue());
         sim.setFatalTime(recoverySlider.getValue());
         sim.setIsFatal(isFatal);
         PlagueSimulation.VIRULENCE = virulenceSlider.getValue();
 
-        // Debugging: Ensure values are being passed correctly
-        System.out.println("Setting values: ");
+        System.out.println("Setting values:");
         System.out.println("Infected: " + infectedSlider.getValue());
         System.out.println("Population: " + populationSlider.getValue());
         System.out.println("Fatal: " + isFatal);
         System.out.println("Virulence: " + virulenceSlider.getValue());
 
-        // Now trigger the start action of the simulation
-        sim.populate();  // Make sure populate is called to set up agents
+        sim.populate();
     }
 }
