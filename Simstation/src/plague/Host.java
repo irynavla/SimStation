@@ -29,25 +29,26 @@ public class Host extends Agent {
         heading = Heading.random();
         int steps = Utilities.rng.nextInt(10) + 1;
         move(steps);
+        System.out.println("Agent moving: " + getName() + " at position (" + getXc() + ", " + getYc() + ")");
 
         if (infected) {
             infectionClock++;
 
             if (infectionClock >= recoveryTime) {
                 if (isFatal) {
-                    stop(); // agent dies
+                    stop(); // Agent dies
                     return;
                 } else {
-                    infected = false; // agent recovers
+                    infected = false; // Agent recovers
                     infectionClock = 0;
                 }
             }
 
             setPartner(25);
             Host p = (Host) getPartner();
-            if (p == null || p.infected) return; // skip if no partner or already infected
+            if (p == null || p.infected) return; // Skip if no partner or already infected
 
-            // Corrected infection logic
+            // Infection logic
             float roll = Utilities.rng.nextFloat() * 100;
             if (roll < PlagueSimulation.VIRULENCE) {
                 float resistanceRoll = Utilities.rng.nextFloat() * 100;
@@ -57,7 +58,6 @@ public class Host extends Agent {
             }
         }
     }
-
 
     @Override
     public void onStart() {

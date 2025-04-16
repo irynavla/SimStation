@@ -143,17 +143,6 @@ public abstract class Simulation extends Model {
     public List<Agent> getAgents() {
         return agents;
     }
-    // Returns the number of agents that are currently running
-    public int getRunningAgents() {
-        int count = 0;
-        for (Agent agent : agents) {
-            if (agent.isRunning()) {
-                count++;
-            }
-        }
-        return count;
-    }
-
 
     // Accessor for the simulation clock
     public int getClock() {

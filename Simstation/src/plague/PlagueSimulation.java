@@ -13,10 +13,11 @@ public class PlagueSimulation extends Simulation {
     private int fatalTime;
     private boolean isFatal;
 
+
     @Override
     public void populate() {
-        int numInfected = (int)((initialInfected / 100.0) * initialPopulation);
 
+        int numInfected = (int) ((initialInfected / 100.0) * initialPopulation);
         for (int i = 0; i < initialPopulation; i++) {
             boolean infected = i < numInfected;
             Host h = new Host(infected);
@@ -24,6 +25,12 @@ public class PlagueSimulation extends Simulation {
             h.setFatal(isFatal);
             addAgent(h);
         }
+    }
+
+    @Override
+    public void start() throws Exception {
+        super.start();  // calls populate internally
+        System.out.println("Simulation started with user-configured settings.");
     }
 
     public String[] getStats() {

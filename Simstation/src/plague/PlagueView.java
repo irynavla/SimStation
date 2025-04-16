@@ -20,8 +20,8 @@ public class PlagueView extends SimulationView {
             } else {
                 gc.setColor(Color.GREEN);
             }
-            gc.fillRect(agent.getXc(),agent.getYc(),10,10);
+            gc.fillRect(agent.getXc(), agent.getYc(), 10, 10); // Position should update dynamically
         }
-
     }
+
 }

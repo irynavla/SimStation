@@ -73,26 +73,22 @@ public class PlaguePanel extends SimulationPanel {
 
     @Override
     public void actionPerformed(ActionEvent ae) {
-        super.actionPerformed(ae);  // Ensure the default button actions are triggered.
+        super.actionPerformed(ae);  // Keep default button behavior
 
-        // Fetch the model and cast it to PlagueSimulation
+        // Fetch and update simulation parameters
         PlagueSimulation sim = (PlagueSimulation) model;
-
-        // Pass slider values to the simulation model
         sim.setInitialInfected(infectedSlider.getValue());
         sim.setInitialPopulation(populationSlider.getValue());
         sim.setFatalTime(recoverySlider.getValue());
         sim.setIsFatal(isFatal);
         PlagueSimulation.VIRULENCE = virulenceSlider.getValue();
 
-        // Debugging: Ensure values are being passed correctly
-        System.out.println("Setting values: ");
-        System.out.println("Infected: " + infectedSlider.getValue());
+        // Debug logging
+        System.out.println("Settings updated:");
+        System.out.println("Initial Infected: " + infectedSlider.getValue());
         System.out.println("Population: " + populationSlider.getValue());
-        System.out.println("Fatal: " + isFatal);
-        System.out.println("Virulence: " + virulenceSlider.getValue());
-
-        // Now trigger the start action of the simulation
-        sim.populate();  // Make sure populate is called to set up agents
+        System.out.println("Fatal Time: " + recoverySlider.getValue());
+        System.out.println("Fatal?: " + isFatal);
+        System.out.println("Virulence: " + PlagueSimulation.VIRULENCE);
     }
 }
