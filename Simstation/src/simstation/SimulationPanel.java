@@ -1,6 +1,8 @@
 package simstation;
 import mvc.AppPanel;
 import mvc.Model;
+import mvc.View;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.*;

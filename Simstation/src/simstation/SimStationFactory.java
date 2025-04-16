@@ -24,14 +24,14 @@ public abstract class SimStationFactory implements AppFactory {
     }
 
     public String[] getEditCommands() {
-        return new String[] {"Start","Suspend","Resume","Stop","Stats"};
+        return new String[] {"Start","Pause","Resume","Stop","Stats"};
     }
 
     public Command makeEditCommand(Model model, String type, Object source) {
         if (type.equalsIgnoreCase("Start")) {
             return new StartCommand(model);
         }
-        else if (type.equalsIgnoreCase("Suspend")) {
+        else if (type.equalsIgnoreCase("Pause")) {
             return new SuspendCommand(model);
         }
         else if (type.equalsIgnoreCase("Resume")) {
