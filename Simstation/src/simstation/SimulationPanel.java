@@ -12,9 +12,6 @@ public class SimulationPanel extends AppPanel {
     public void setModel(Model m) {
         super.setModel(m);
         Simulation s = (Simulation)m;
-        for (Agent a : s.agents) {
-            a.start();
-        }
     }
     public SimulationPanel(SimStationFactory factory) {
         super(factory);
