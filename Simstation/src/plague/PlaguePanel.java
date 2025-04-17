@@ -129,7 +129,7 @@ public class PlaguePanel extends SimulationPanel {
         System.out.println("Initial Infected: " + infectedSlider.getValue());
         System.out.println("Population: " + populationSlider.getValue());
         System.out.println("Fatal Time: " + recoverySlider.getValue());
-        System.out.println("Fatal?: " + isFatal);
+        System.out.println("Fatal: " + isFatal);
         System.out.println("Virulence: " + PlagueSimulation.VIRULENCE);
     }
 }
