@@ -35,6 +35,10 @@ public abstract class Agent extends Publisher implements Serializable, Runnable 
         yc = Utilities.rng.nextInt(500);
     }
 
+    public Simulation getSimulation() {
+        return world;
+    }
+
     // Called when thread starts
     public synchronized void run() {
         myThread = Thread.currentThread();  // Capture this agent's thread
@@ -173,4 +177,6 @@ public abstract class Agent extends Publisher implements Serializable, Runnable 
             return null;
         }
     }
+
+
 }
