@@ -31,7 +31,7 @@ public class PrisonerDilemmaFactory extends SimStationFactory {
 
     @Override
     public String about() {
-        return "SimStation – Prisoner's Dilemma by Your Name, 2025";
+        return "SimStation – Prisoner's Dilemma by Group 10, 2025";
     }
 
     @Override

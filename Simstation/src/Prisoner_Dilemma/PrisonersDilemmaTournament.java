@@ -9,7 +9,6 @@ import java.util.ArrayList;
 public class PrisonersDilemmaTournament extends Simulation {
     private List<Prisoner> prisoners = new ArrayList<>();
 
-    // Override the populate method from Simulation class
     @Override
     public void populate() throws Exception {
         // Create 10 prisoners for each strategy (cheat, cooperate, etc.)
@@ -26,7 +25,6 @@ public class PrisonersDilemmaTournament extends Simulation {
         }
     }
 
-    // Override the getStats method from Simulation class
     @Override
     public String[] getStats() {
         // Calculate average fitness for each strategy

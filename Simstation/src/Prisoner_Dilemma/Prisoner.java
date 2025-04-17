@@ -42,7 +42,7 @@ public class Prisoner extends Agent {
 
     @Override
     public void update() {
-// Get a random neighbor using the getNeighbor method from the Simulation class
+
         Prisoner neighbor = (Prisoner) getSimulation().getNeighbor(this, 10);
         if (neighbor != null) {
             boolean myMove = cooperate(); // Decide whether to cooperate or cheat
@@ -78,23 +78,17 @@ public class Prisoner extends Agent {
 
     @Override
     public void onExit() {
-        // Implement the logic that happens when the prisoner exits
         System.out.println(getName() + " has exited.");
-        // You could add any cleanup or additional logic here if needed
     }
 
     @Override
     public void onInterrupted() {
-        // Handle the interruption. You could log it, reset values, or do something else.
         System.out.println("Agent " + getName() + " was interrupted.");
-        // Optionally, you could add custom handling logic here, like stopping the agent or changing its state.
     }
 
     @Override
     public void onStart() {
-        // Initialize the agent's state or perform any setup here
         System.out.println("Agent " + getName() + " has started.");
-        // Any other initialization or setup logic goes here.
     }
 
     public Color getColor() {
