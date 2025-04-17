@@ -15,14 +15,13 @@ public class PlaguePanel extends SimulationPanel {
 
     public PlaguePanel(SimStationFactory factory) {
         super(factory);
-        setLayout(new BorderLayout()); // Change to BorderLayout if not already set
+        setLayout(new BorderLayout()); // Ensure using BorderLayout
 
         // Pink controls panel on the left
         JPanel controls = new JPanel();
-        controls.setLayout(new BoxLayout(controls, BoxLayout.Y_AXIS));
+        controls.setLayout(new BorderLayout()); // Use BorderLayout for controls panel
         controls.setBackground(Color.PINK); // Set background color
-        controls.setPreferredSize(new Dimension(500, 300));
-//        add(controls, BorderLayout.WEST);
+        controls.setPreferredSize(new Dimension(500, 500));
 
         // === Simulation Buttons ===
         JPanel buttonRow = new JPanel(new GridLayout(1, 5));
@@ -37,44 +36,49 @@ public class PlaguePanel extends SimulationPanel {
         buttonWrapper.setOpaque(false);
         buttonWrapper.setAlignmentX(Component.CENTER_ALIGNMENT);
         buttonWrapper.add(buttonRow);
-        controls.add(buttonWrapper);
-        controls.add(Box.createRigidArea(new Dimension(0, 20)));
+        controls.add(buttonWrapper, BorderLayout.NORTH); // Place buttons at the top
+        controls.add(Box.createVerticalStrut(20), BorderLayout.CENTER); // Spacer for better layout
+
+        // === Sliders ===
+        JPanel slidersPanel = new JPanel();
+        slidersPanel.setLayout(new BoxLayout(slidersPanel, BoxLayout.Y_AXIS));
+        slidersPanel.setOpaque(false);
 
         // === Initial % Infected ===
-        controls.add(new JLabel("Initial % Infected:"));
+        slidersPanel.add(new JLabel("Initial % Infected:"));
         infectedSlider = new JSlider(0, 100, 10);
         infectedSlider.setMajorTickSpacing(10);
         infectedSlider.setPaintTicks(true);
         infectedSlider.setPaintLabels(true);
-        controls.add(infectedSlider);
-        controls.add(Box.createRigidArea(new Dimension(0, 10)));
+        slidersPanel.add(infectedSlider);
+        slidersPanel.add(Box.createVerticalStrut(10));
 
         // === Infection Probability (Virulence) ===
-        controls.add(new JLabel("Infection Probability:"));
+        slidersPanel.add(new JLabel("Infection Probability:"));
         virulenceSlider = new JSlider(0, 100, PlagueSimulation.VIRULENCE);
         virulenceSlider.setMajorTickSpacing(10);
         virulenceSlider.setPaintTicks(true);
         virulenceSlider.setPaintLabels(true);
-        controls.add(virulenceSlider);
-        controls.add(Box.createRigidArea(new Dimension(0, 10)));
+        slidersPanel.add(virulenceSlider);
+        slidersPanel.add(Box.createVerticalStrut(10));
 
         // === Population Size ===
-        controls.add(new JLabel("Initial Population Size:"));
+        slidersPanel.add(new JLabel("Initial Population Size:"));
         populationSlider = new JSlider(0, 200, 50);
         populationSlider.setMajorTickSpacing(20);
         populationSlider.setPaintTicks(true);
         populationSlider.setPaintLabels(true);
-        controls.add(populationSlider);
-        controls.add(Box.createRigidArea(new Dimension(0, 10)));
+        slidersPanel.add(populationSlider);
+        slidersPanel.add(Box.createVerticalStrut(10));
 
         // === Recovery/Fatal Time ===
-        controls.add(new JLabel("Fatality / Recovery Time:"));
+        slidersPanel.add(new JLabel("Fatality / Recovery Time:"));
         recoverySlider = new JSlider(0, 500, 200);
         recoverySlider.setMajorTickSpacing(100);
         recoverySlider.setPaintTicks(true);
         recoverySlider.setPaintLabels(true);
-        controls.add(recoverySlider);
-        controls.add(Box.createRigidArea(new Dimension(0, 10)));
+        slidersPanel.add(recoverySlider);
+        slidersPanel.add(Box.createVerticalStrut(10));
 
         // === Fatality Toggle Button ===
         fatalityButton = new JButton("Not Fatal");
@@ -85,12 +89,17 @@ public class PlaguePanel extends SimulationPanel {
                 fatalityButton.setText(isFatal ? "Not Fatal" : "Fatal");
             }
         });
-        controls.add(fatalityButton);
+        slidersPanel.add(fatalityButton);
 
-        // Add to the WEST side of the panel
+        // Add slidersPanel to the center of controls panel
+        controls.add(slidersPanel, BorderLayout.CENTER);
+
+        // === View Panel ===
+        view.setBackground(Color.DARK_GRAY); // Set background color for agent deployment field
+
+        // Add controls panel to the WEST side and view panel to the CENTER
         this.add(controls, BorderLayout.WEST);
         this.add(view, BorderLayout.CENTER);
-
     }
 
     // Helper to create buttons with shared ActionListener
@@ -115,7 +124,6 @@ public class PlaguePanel extends SimulationPanel {
         sim.setIsFatal(isFatal);
         PlagueSimulation.VIRULENCE = virulenceSlider.getValue();
 
-
         // Debug log
         System.out.println("Settings updated:");
         System.out.println("Initial Infected: " + infectedSlider.getValue());
@@ -125,3 +133,4 @@ public class PlaguePanel extends SimulationPanel {
         System.out.println("Virulence: " + PlagueSimulation.VIRULENCE);
     }
 }
+
