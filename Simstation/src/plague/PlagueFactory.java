@@ -14,6 +14,9 @@ public class PlagueFactory extends SimStationFactory {
     }
 
     public View makeView(Model model) {
-        return new PlagueView(model); }
-
+        return new PlagueView(model);
+    }
+    public String about() {
+        return "SimStation – Plague by Iryna Vlasiuk, 2025";
+    }
 }

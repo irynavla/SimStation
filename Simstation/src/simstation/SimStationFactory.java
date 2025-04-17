@@ -20,7 +20,7 @@ public abstract class SimStationFactory implements AppFactory {
     }
 
     public String about() {
-        return "Simulation version 1.0";
+        return "SimStation version 1.0 by Iryna and Fatima";
     }
 
     public String[] getEditCommands() {
