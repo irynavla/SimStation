@@ -34,7 +34,6 @@ public class PrisonerDilemmaFactory extends SimStationFactory {
         return "SimStation – Prisoner's Dilemma by Your Name, 2025";
     }
 
-    @Override
     public Command makeEditCommand(Model model, String type) {
         return switch (type) {
             case "Start" -> new StartCommand(model);
